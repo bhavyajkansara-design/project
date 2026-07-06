@@ -154,24 +154,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
     );
 
     // ==========================================
-    // 5. Hero Parallax on Scroll
+    // 5. Hero Parallax on Scroll (Responsive)
     // ==========================================
-    gsap.to(".hero-bg", {
-        yPercent: 30,
-        ease: "none",
-        scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: true
-        }
-    });
+    let mm = gsap.matchMedia();
 
-    // Floating cards parallax
-    document.querySelectorAll('.glass-card').forEach(card => {
-        const speed = card.getAttribute('data-speed');
-        gsap.to(card, {
-            y: -100 * speed,
+    mm.add("(min-width: 769px) and (prefers-reduced-motion: no-preference)", () => {
+        gsap.to(".hero-bg", {
+            yPercent: 30,
             ease: "none",
             scrollTrigger: {
                 trigger: ".hero",
@@ -180,7 +169,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
                 scrub: true
             }
         });
+
+        // Floating cards parallax
+        document.querySelectorAll('.glass-card').forEach(card => {
+            const speed = card.getAttribute('data-speed');
+            gsap.to(card, {
+                y: -100 * speed,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: ".hero",
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+        });
     });
+
 
     // ==========================================
     // 6. Portfolio (Vertical Grid now)
@@ -223,11 +228,37 @@ document.addEventListener("DOMContentLoaded", (event) => {
         end: 99999,
         toggleClass: {className: 'scrolled', targets: nav},
         onUpdate: (self) => {
-            if(self.direction === 1) {
-                gsap.to(nav, { width: '85%', padding: '0.8rem 2rem', duration: 0.3 });
-            } else if (self.direction === -1 && self.progress < 0.05) {
-                gsap.to(nav, { width: '95%', padding: '1.2rem 2rem', duration: 0.3 });
+            // Only shrink if on desktop
+            if (window.innerWidth > 768) {
+                if(self.direction === 1) {
+                    gsap.to(nav, { width: '85%', padding: '0.8rem 2rem', duration: 0.3 });
+                } else if (self.direction === -1 && self.progress < 0.05) {
+                    gsap.to(nav, { width: '95%', padding: '1.2rem 2rem', duration: 0.3 });
+                }
             }
         }
     });
+
+    // ==========================================
+    // 9. Mobile Hamburger Menu Logic
+    // ==========================================
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-btn');
+    
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            });
+        });
+    }
 });
