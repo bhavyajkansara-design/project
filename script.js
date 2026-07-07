@@ -1,6 +1,35 @@
 // Ensure DOM is loaded
 document.addEventListener("DOMContentLoaded", (event) => {
-    
+    // ==========================================
+    // Theme Toggle Logic
+    // ==========================================
+    const themeToggle = document.querySelector('.theme-toggle');
+    const currentTheme = localStorage.getItem('theme');
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    // Initialize Theme
+    if (currentTheme == 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    } else if (currentTheme == 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (!prefersDarkScheme.matches) {
+        // If no local storage and system prefers light, set to light. (Default is dark)
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+
+    if(themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'light') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
+
     // Register GSAP Plugins
     gsap.registerPlugin(ScrollTrigger);
 
